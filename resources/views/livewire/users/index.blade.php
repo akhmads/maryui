@@ -51,7 +51,7 @@ new class extends Component {
         ->orderBy(...array_values($this->sortBy))
         ->when($this->search, fn(Builder $q) => $q->where('name', 'like', "%$this->search%"))
         ->when($this->country_id, fn(Builder $q) => $q->where('country_id', $this->country_id))
-        ->paginate(10);
+        ->paginate(8);
     }
 
     public function with(): array
@@ -74,7 +74,7 @@ new class extends Component {
 
 <div>
     <!-- HEADER -->
-    <x-header title="Users" separator progress-indicator>
+    <x-header title="Users" separator progress-indicator> {{-- class="sticky top-6 z-10 bg-gray-50" --}}
         <x-slot:middle class="!justify-end">
             <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
         </x-slot:middle>
@@ -88,7 +88,7 @@ new class extends Component {
     <x-card>
         <x-table :headers="$headers" :rows="$users" :sort-by="$sortBy" with-pagination link="users/{id}/edit">
             @scope('cell_avatar', $user)
-            <x-avatar image="{{ $user->avatar ?? asset('assets/img/default-avatar.png') }}" class="!w-10" />
+            <x-avatar image="{{ $user->avatar ?? asset('assets/img/default-avatar.png') }}" class="!w-8" />
             @endscope
             @scope('actions', $user)
             <x-button icon="o-trash" wire:click="delete({{ $user['id'] }})" wire:confirm="Are you sure?" spinner class="btn-ghost btn-sm text-red-500" />
