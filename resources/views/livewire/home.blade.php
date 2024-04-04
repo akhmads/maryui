@@ -7,5 +7,7 @@ new class extends Component {
 }; ?>
 
 <div>
-    Welcome
+    <h2>Welcome</h2>
+
+    <x-button label="Search" @click.stop="$dispatch('mary-search-open')" />
 </div>

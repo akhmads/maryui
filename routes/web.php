@@ -2,7 +2,19 @@
 
 use Livewire\Volt\Volt;
 
-Volt::route('/', 'home');
-Volt::route('/users', 'users.index');
-Volt::route('/users/create', 'users.create');
-Volt::route('/users/{user}/edit', 'users.edit');
+Volt::route('/login', 'login')->name('login');
+Volt::route('/register', 'register');
+
+Route::middleware('auth')->group(function () {
+    Volt::route('/', 'home');
+    Volt::route('/users', 'users.index');
+    Volt::route('/users/create', 'users.create');
+    Volt::route('/users/{user}/edit', 'users.edit');
+});
+
+Route::get('/logout', function () {
+    auth()->logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/');
+});
