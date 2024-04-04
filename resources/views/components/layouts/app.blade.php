@@ -6,6 +6,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ isset($title) ? $title.' - '.config('app.name') : config('app.name') }}</title>
 
+    {{-- Cropper.js --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" />
+
+     {{-- TinyMCE --}}
+     <script src="https://cdn.tiny.cloud/1/fuq9e9kvmq3912uqd35vzhh3nhc3inu9zpbhoe7uf2wuuy1c/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen font-sans antialiased bg-base-200/50 dark:bg-base-200">
@@ -46,12 +53,12 @@
                     <x-menu-separator />
                 @endif
 
-                {{-- <x-menu-item title="Users" icon="o-sparkles" link="/" /> --}}
-                <x-menu-sub title="Settings" icon="o-cog-6-tooth">
-                    <x-menu-item title="Users" icon="o-user" link="/" />
+                <x-menu-item title="Home" icon="o-sparkles" link="/" />
+                <x-menu-item title="Users" icon="o-users" link="/users" />
+                {{-- <x-menu-sub title="Settings" icon="o-cog-6-tooth">
                     <x-menu-item title="Wifi" icon="o-wifi" link="####" />
                     <x-menu-item title="Archives" icon="o-archive-box" link="####" />
-                </x-menu-sub>
+                </x-menu-sub> --}}
             </x-menu>
         </x-slot:sidebar>
 
