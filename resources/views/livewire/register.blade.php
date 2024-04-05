@@ -50,7 +50,9 @@ class extends Component {
 }; ?>
 <div class="md:w-96 mx-auto">
     <div class="mb-10 flex justify-center">
-        <img src="{{ asset('assets/img/login.png') }}" alt="">
+        <a href="{{ url('/') }}">
+            <img src="{{ asset('assets/img/login.png') }}" alt="">
+        </a>
     </div>
 
     <x-form wire:submit="register">
