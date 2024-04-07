@@ -19,6 +19,12 @@ new class extends Component {
     #[Rule('required|email')]
     public string $email = '';
 
+    #[Rule('sometimes|confirmed')]
+    public string $password = '';
+
+    #[Rule('sometimes')]
+    public string $password_confirmation = '';
+
     #[Rule('sometimes')]
     public ?int $country_id = null;
 
@@ -34,6 +40,7 @@ new class extends Component {
     public function mount(): void
     {
         $this->fill($this->user);
+        $this->user->password = '';
         $this->my_languages = $this->user->languages->pluck('id')->all();
     }
 
@@ -48,6 +55,12 @@ new class extends Component {
     public function save(): void
     {
         $data = $this->validate();
+
+        if (!empty($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        } else {
+            unset($data['password']);
+        }
 
         $this->user->update($data);
 
@@ -77,6 +90,17 @@ new class extends Component {
             <x-input label="Name" wire:model="name" />
             <x-input label="Email" wire:model="email" />
             <x-select label="Country" wire:model="country_id" :options="$countries" placeholder="---" />
+        </x-form-section>
+
+        <hr class="my-5" />
+
+        <x-form-section>
+            <x-slot:left>
+                <x-header title="Login" subtitle="Login info from user" size="text-2xl" />
+            </x-slot:left>
+
+            <x-input label="Password" wire:model="password" type="password" />
+            <x-input label="Confirm Password" wire:model="password_confirmation" type="password" />
         </x-form-section>
 
         <hr class="my-5" />
