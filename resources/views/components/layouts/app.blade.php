@@ -32,7 +32,7 @@
     {{-- MAIN --}}
     <x-main full-width>
         {{-- SIDEBAR --}}
-        <x-slot:sidebar drawer="main-drawer" collapsible class="bg-base-100 lg:bg-inherit">
+        <x-slot:sidebar drawer="main-drawer" class="bg-base-100 lg:bg-inherit">
 
             {{-- BRAND --}}
             <x-app-brand class="p-5 pt-3" />

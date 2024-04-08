@@ -3,6 +3,7 @@
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Volt\Component;
+use Livewire\Attributes\Rule;
 use Livewire\WithPagination;
 use Mary\Traits\Toast;
 use App\Models\Country;
@@ -10,9 +11,15 @@ use App\Models\Country;
 new class extends Component {
     use Toast, WithPagination;
 
+    public Country $country;
+
+    #[Rule('required')]
+    public string $name = '';
+
     public string $search = '';
     public bool $drawer = false;
     public array $sortBy = ['column' => 'name', 'direction' => 'asc'];
+    public bool $formModal = false;
 
     // Clear filters
     public function clear(): void
@@ -61,6 +68,22 @@ new class extends Component {
             $this->resetPage();
         }
     }
+
+    public function edit(Country $country): void
+    {
+        $this->fill($country);
+        $this->formModal = true;
+    }
+
+    public function save(): void
+    {
+        $data = $this->validate();
+
+        if($this->country)
+        $country = Country::create($data);
+
+        $this->success('Country created.', redirectTo: '/country');
+    }
 }; ?>
 
 <div>
@@ -72,13 +95,14 @@ new class extends Component {
         </x-slot:middle>
         <x-slot:actions>
             <x-button label="Filters" @click="$wire.drawer = true" responsive icon="o-funnel" />
-            <x-button label="Create" link="/countries/create" responsive icon="o-plus" class="btn-primary" />
+            {{-- <x-button label="Create" link="/countries/create" responsive icon="o-plus" class="btn-primary" /> --}}
+            <x-button label="Create" @click="$wire.formModal = true" responsive icon="o-plus" class="btn-primary" />
         </x-slot:actions>
     </x-header>
 
     <!-- TABLE  -->
     <x-card>
-        <x-table :headers="$headers" :rows="$countries" :sort-by="$sortBy" with-pagination link="countries/{id}/edit">
+        <x-table :headers="$headers" :rows="$countries" :sort-by="$sortBy" with-pagination @row-click="$wire.edit($event.detail.id)"> {{-- link="countries/{id}/edit" --}}
             @scope('actions', $country)
             <x-button icon="o-trash" wire:click="delete({{ $country['id'] }})" wire:confirm="Are you sure?" spinner class="btn-ghost btn-sm text-red-500" />
             @endscope
@@ -96,4 +120,15 @@ new class extends Component {
             <x-button label="Done" icon="o-check" class="btn-primary" @click="$wire.drawer = false" />
         </x-slot:actions>
     </x-drawer>
+
+    <!-- FORM MODAL -->
+    <x-modal wire:model="formModal" title="Create">
+        <x-form wire:submit="save">
+            <x-input label="Name" wire:model="name" />
+            <x-slot:actions>
+                <x-button label="Cancel" @click="$wire.formModal = false" />
+                <x-button label="Save" icon="o-paper-airplane" spinner="save" type="submit" class="btn-primary" />
+            </x-slot:actions>
+        </x-form>
+    </x-modal>
 </div>
