@@ -3,118 +3,94 @@
 use Livewire\Volt\Component;
 use Livewire\Attributes\Rule;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Mary\Traits\Toast;
+use App\Models\Post;
 use App\Models\User;
-use App\Models\Country;
-use App\Models\Language;
+use App\Models\Tag;
 
 new class extends Component {
     use Toast, WithFileUploads;
 
-    public User $user;
+    public Post $post;
 
     #[Rule('required')]
-    public string $name = '';
-
-    #[Rule('required|email')]
-    public string $email = '';
-
-    #[Rule('sometimes|confirmed')]
-    public string $password = '';
-
-    #[Rule('sometimes')]
-    public string $password_confirmation = '';
-
-    #[Rule('sometimes')]
-    public ?int $country_id = null;
-
-    #[Rule('nullable|image|max:1024')]
-    public $photo;
+    public string $title = '';
 
     #[Rule('required')]
-    public array $my_languages = [];
+    public string $body = '';
 
     #[Rule('sometimes')]
-    public ?string $bio = null;
+    public string $date = '';
+
+    #[Rule('sometimes')]
+    public ?int $author_id = null;
+
+    #[Rule('sometimes')]
+    public array $tags = [];
+
+    public Collection $usersSearchable;
+    public Collection $tagsSearchable;
 
     public function mount(): void
     {
-        $this->fill($this->user);
-        $this->user->password = '';
-        $this->my_languages = $this->user->languages->pluck('id')->all();
+        $this->fill($this->post);
+        $this->tags = $this->post->tags->pluck('id')->all();
+        $this->searchUsers();
+        $this->searchTags();
     }
 
     public function with(): array
     {
-        return [
-            'countries' => Country::all(),
-            'languages' => Language::all(),
-        ];
+        return [];
     }
 
     public function save(): void
     {
         $data = $this->validate();
 
-        if (!empty($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
-        } else {
-            unset($data['password']);
-        }
+        $this->post->update($data);
 
-        $this->user->update($data);
+        $this->post->tags()->sync($this->tags);
 
-        $this->user->languages()->sync($this->my_languages);
+        $this->success('Post updated with success.', redirectTo: '/posts');
+    }
 
-        if ($this->photo) {
-            $url = $this->photo->store('users', 'public');
-            $this->user->update(['avatar' => "/storage/$url"]);
-        }
+    public function searchUsers(string $value = ''): void
+    {
+        $selectedOption = User::where('id', $this->author_id)->get();
+        $this->usersSearchable = User::query()
+            ->where('name', 'like', "%$value%")
+            ->take(5)
+            ->orderBy('name')
+            ->get()
+            ->merge($selectedOption);
+    }
 
-        $this->success('User updated with success.', redirectTo: '/users');
+    public function searchTags(string $value = ''): void
+    {
+        $selectedOption = Tag::whereIn('id', $this->tags)->get();
+        $this->tagsSearchable = Tag::query()
+            ->where('name', 'like', "%$value%")
+            ->take(5)
+            ->orderBy('name')
+            ->get()
+            ->merge($selectedOption);
     }
 }; ?>
 
 <div>
-    <x-header title="Update {{ $user->name }}" separator />
-
+    <x-header title="Update Post" separator />
     <x-form wire:submit="save">
-        <x-form-section>
-            <x-slot:left>
-                <x-header title="Basic" subtitle="Basic info from user" size="text-2xl" />
-            </x-slot:left>
-
-            <x-file label="Avatar" wire:model="photo" accept="image/png, image/jpeg" crop-after-change>
-                <img src="{{ $user->avatar ?? asset('assets/img/default-avatar.png') }}" class="h-40 rounded-lg" />
-            </x-file>
-            <x-input label="Name" wire:model="name" />
-            <x-input label="Email" wire:model="email" />
-            <x-select label="Country" wire:model="country_id" :options="$countries" placeholder="---" />
-        </x-form-section>
-
-        <hr class="my-5" />
-
-        <x-form-section>
-            <x-slot:left>
-                <x-header title="Login" subtitle="Login info from user" size="text-2xl" />
-            </x-slot:left>
-
-            <x-input label="Password" wire:model="password" type="password" />
-            <x-input label="Confirm Password" wire:model="password_confirmation" type="password" />
-        </x-form-section>
-
-        <hr class="my-5" />
-
-        <x-form-section>
-            <x-slot:left>
-                <x-header title="Details" subtitle="More about the user" size="text-2xl" />
-            </x-slot:left>
-            <x-choices-offline label="Languages" wire:model="my_languages" :options="$languages" searchable />
-            <x-editor wire:model="bio" label="Bio" hint="The great biography" />
-        </x-form-section>
+        <x-input label="Title" wire:model="title" />
+        <x-datetime label="Date" wire:model="date" />
+        <x-choices label="Author" wire:model="author_id" :options="$usersSearchable" search-function="searchUsers" single searchable />
+        <x-choices label="Tags" wire:model="tags" :options="$tagsSearchable" debounce="300ms" search-function="searchTags" searchable />
+        <x-editor wire:model="body" label="Body" hint="The great story" />
 
         <x-slot:actions>
-            <x-button label="Cancel" link="/users" />
+            <x-button label="Cancel" link="/posts" />
             <x-button label="Save" icon="o-paper-airplane" spinner="save" type="submit" class="btn-primary" />
         </x-slot:actions>
     </x-form>

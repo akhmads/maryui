@@ -15,7 +15,7 @@ new class extends Component {
     public string $search = '';
     public int $author_id = 0;
     public bool $drawer = false;
-    public array $sortBy = ['column' => 'name', 'direction' => 'asc'];
+    public array $sortBy = ['column' => 'date', 'direction' => 'desc'];
 
     // Clear filters
     public function clear(): void
@@ -37,8 +37,8 @@ new class extends Component {
     {
         return [
             ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
-            ['key' => 'name', 'label' => 'Name', 'class' => 'w-64'],
-            ['key' => 'author_name', 'label' => 'Author'],
+            ['key' => 'title', 'label' => 'Title'],
+            ['key' => 'author_name', 'label' => 'Author', 'class' => 'w-60'],
         ];
     }
 
@@ -47,7 +47,7 @@ new class extends Component {
         return Post::query()
         ->withAggregate('author', 'name')
         ->orderBy(...array_values($this->sortBy))
-        ->when($this->search, fn(Builder $q) => $q->where('name', 'like', "%$this->search%"))
+        ->when($this->search, fn(Builder $q) => $q->where('title', 'like', "%$this->search%"))
         ->when($this->author_id, fn(Builder $q) => $q->where('author_id', $this->author_id))
         ->paginate(8);
     }

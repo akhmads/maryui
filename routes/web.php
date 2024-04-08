@@ -12,7 +12,7 @@ Route::middleware('auth')->group(function () {
     Volt::route('/users/{user}/edit', 'users.edit');
     Volt::route('/posts', 'posts.index');
     Volt::route('/posts/create', 'posts.create');
-    Volt::route('/posts/{user}/edit', 'posts.edit');
+    Volt::route('/posts/{post}/edit', 'posts.edit');
 });
 
 Route::get('/logout', function () {

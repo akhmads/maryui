@@ -21,13 +21,13 @@ class Post extends Model
 
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(Language::class);
+        return $this->belongsToMany(Tag::class);
     }
 
-    protected function casts(): array
-    {
-        return [
-            'date' => 'date',
-        ];
-    }
+    // protected function casts(): array
+    // {
+    //     return [
+    //         'date' => 'date',
+    //     ];
+    // }
 }
