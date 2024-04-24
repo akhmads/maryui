@@ -6,20 +6,19 @@ use Livewire\Volt\Component;
 use Livewire\Attributes\Rule;
 use Livewire\WithPagination;
 use Mary\Traits\Toast;
+use App\Livewire\Forms\CountryForm;
 use App\Models\Country;
 
 new class extends Component {
     use Toast, WithPagination;
 
-    public Country $country;
-
-    #[Rule('required')]
-    public string $name = '';
+    public CountryForm $form;
 
     public string $search = '';
     public bool $drawer = false;
     public array $sortBy = ['column' => 'name', 'direction' => 'asc'];
     public bool $formModal = false;
+    public ?string $formTitle;
 
     // Clear filters
     public function clear(): void
@@ -33,7 +32,7 @@ new class extends Component {
     public function delete(Country $country): void
     {
         $country->delete();
-        $this->warning("$country->name deleted", 'Good bye!', position: 'toast-bottom');
+        $this->warning("$country->name deleted", 'Good bye!');
     }
 
     // Table headers
@@ -69,34 +68,45 @@ new class extends Component {
         }
     }
 
+    public function openModal(): void
+    {
+        $this->form->init();
+        $this->formModal = true;
+    }
+
+    public function create(): void
+    {
+        $this->openModal();
+        $this->formTitle = 'Create';
+    }
+
     public function edit(Country $country): void
     {
-        $this->fill($country);
-        $this->formModal = true;
+        $this->openModal();
+        $this->formTitle = 'Update';
+        $this->form->set($country);
     }
 
     public function save(): void
     {
-        $data = $this->validate();
-
-        if($this->country)
-        $country = Country::create($data);
-
-        $this->success('Country created.', redirectTo: '/country');
+        $this->validate();
+        $this->form->save();
+        $this->formModal = false;
+        $this->success('Country has been saved.');
     }
 }; ?>
 
 <div>
     <!-- HEADER -->
     {{-- class="sticky top-6 z-10 bg-gray-50" --}}
-    <x-header title="Countries" separator progress-indicator>
+    <x-header title="Countries" subtitle="Master Countries" separator progress-indicator>
         <x-slot:middle class="!justify-end">
             <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
         </x-slot:middle>
         <x-slot:actions>
             <x-button label="Filters" @click="$wire.drawer = true" responsive icon="o-funnel" />
             {{-- <x-button label="Create" link="/countries/create" responsive icon="o-plus" class="btn-primary" /> --}}
-            <x-button label="Create" @click="$wire.formModal = true" responsive icon="o-plus" class="btn-primary" />
+            <x-button label="Create" wire:click="create" responsive icon="o-plus" class="btn-primary" />
         </x-slot:actions>
     </x-header>
 
@@ -122,9 +132,9 @@ new class extends Component {
     </x-drawer>
 
     <!-- FORM MODAL -->
-    <x-modal wire:model="formModal" title="Create">
+    <x-modal wire:model="formModal" title="{{ $formTitle }}">
         <x-form wire:submit="save">
-            <x-input label="Name" wire:model="name" />
+            <x-input label="Country Name" wire:model="form.name" />
             <x-slot:actions>
                 <x-button label="Cancel" @click="$wire.formModal = false" />
                 <x-button label="Save" icon="o-paper-airplane" spinner="save" type="submit" class="btn-primary" />

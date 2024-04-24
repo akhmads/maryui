@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="cupcake">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ isset($title) ? $title.' - '.config('app.name') : config('app.name') }}</title>
+
+    {{-- Flatpickr  --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     {{-- Cropper.js --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
@@ -12,6 +16,9 @@
 
      {{-- TinyMCE --}}
      <script src="https://cdn.tiny.cloud/1/fuq9e9kvmq3912uqd35vzhh3nhc3inu9zpbhoe7uf2wuuy1c/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
+     {{-- Chart.js  --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -43,16 +50,21 @@
                 {{-- User --}}
                 @if($user = auth()->user())
                     <x-menu-separator />
-
                     <x-list-item :item="$user" value="name" sub-value="email" no-separator no-hover class="-mx-2 !-my-2 rounded">
                         <x-slot:avatar>
                             <x-avatar image="{{ $user->avatar ?? asset('assets/img/default-avatar.png') }}" class="!w-10" />
                         </x-slot:avatar>
                         <x-slot:actions>
-                            <x-button icon="o-power" class="btn-circle btn-ghost btn-xs" tooltip-left="logoff" no-wire-navigate link="/logout" />
+                            {{-- <x-button icon="o-power" class="btn-circle btn-ghost btn-xs" tooltip-left="logoff" no-wire-navigate link="/logout" /> --}}
+                            <x-dropdown>
+                                <x-slot:trigger>
+                                    <x-button icon="o-cog-6-tooth" class="btn-circle btn-ghost btn-sm" />
+                                </x-slot:trigger>
+                                <x-menu-item title="Change Theme" icon="o-swatch" @click="$dispatch('mary-toggle-theme')" />
+                                <x-menu-item title="Log Out" icon="o-power" no-wire-navigate link="/logout" />
+                            </x-dropdown>
                         </x-slot:actions>
                     </x-list-item>
-
                     <x-menu-separator />
                 @endif
 
@@ -64,6 +76,11 @@
                     <x-menu-item title="Wifi" icon="o-wifi" link="####" />
                     <x-menu-item title="Archives" icon="o-archive-box" link="####" />
                 </x-menu-sub> --}}
+
+                <x-menu-separator />
+                <x-menu-item icon="o-magnifying-glass" @click.stop="$dispatch('mary-search-open')">
+                    Search <x-badge value="Cmd + G" class="badge-ghost" />
+                </x-menu-item>
             </x-menu>
         </x-slot:sidebar>
 
@@ -78,5 +95,8 @@
 
     {{-- Spotlight --}}
     <x-spotlight />
+
+    {{-- Theme toggle --}}
+    <x-theme-toggle class="hidden" />
 </body>
 </html>
