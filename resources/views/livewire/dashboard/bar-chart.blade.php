@@ -38,7 +38,7 @@ new class extends Component {
     public function placeholder()
     {
         return <<<'HTML'
-        <div class="h-full flex gap-3 justify-center bg-indigo-50 p-20 rounded-lg">
+        <div class="h-full flex gap-3 justify-center bg-indigo-50 dark:bg-gray-800 dark:text-white p-20 rounded-lg">
             <x-loading class="text-primary loading-dots" /> Loading...
         </div>
         HTML;
