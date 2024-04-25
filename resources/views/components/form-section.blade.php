@@ -6,7 +6,7 @@
         {{ $left }}
     </div>
     @endunless
-    <div class="col-span-9 grid gap-3">
+    <div class="col-span-7 grid gap-3">
         {{ $slot }}
     </div>
 </div>

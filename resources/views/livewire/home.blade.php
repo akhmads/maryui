@@ -29,14 +29,12 @@ new class extends Component {
     @endphp
     <x-header title="Dashboard" subtitle="Application Dashboard" separator progress-indicator>
         <x-slot:middle class="!justify-end">
-            {{-- <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" /> --}}
             <div class="flex items-center gap-3">
                 <x-datepicker label="" wire:model="date1" icon-right="o-calendar" :config="$configDate" />
                 <x-datepicker label="" wire:model="date2" icon-right="o-calendar" :config="$configDate" />
             </div>
         </x-slot:middle>
         <x-slot:actions>
-            {{-- <x-button label="Filters" @click="$wire.drawer = true" responsive icon="o-funnel" /> --}}
             <x-button label="Filter" wire:click="filter" spinner="filter" responsive icon="o-funnel" class="btn-primary" />
         </x-slot:actions>
     </x-header>
@@ -57,7 +55,5 @@ new class extends Component {
                 <livewire:dashboard.pie-chart lazy />
             </x-card>
         </div>
-
-        <x-button label="Search" @click.stop="$dispatch('mary-search-open')" />
     </div>
 </div>

@@ -79,39 +79,41 @@ new class extends Component {
     <x-header title="Update {{ $user->name }}" separator />
 
     <x-form wire:submit="save">
-        <x-form-section>
-            <x-slot:left>
-                <x-header title="Basic" subtitle="Basic info from user" size="text-2xl" />
-            </x-slot:left>
+        <x-card>
+            <x-form-section>
+                <x-slot:left>
+                    <x-header title="Basic" subtitle="Basic info from user" size="text-2xl" />
+                </x-slot:left>
 
-            <x-file label="Avatar" wire:model="photo" accept="image/png, image/jpeg" crop-after-change>
-                <img src="{{ $user->avatar ?? asset('assets/img/default-avatar.png') }}" class="h-40 rounded-lg" />
-            </x-file>
-            <x-input label="Name" wire:model="name" />
-            <x-input label="Email" wire:model="email" />
-            <x-select label="Country" wire:model="country_id" :options="$countries" placeholder="---" />
-        </x-form-section>
+                <x-file label="Avatar" wire:model="photo" accept="image/png, image/jpeg" crop-after-change>
+                    <img src="{{ $user->avatar ?? asset('assets/img/default-avatar.png') }}" class="h-40 rounded-lg" />
+                </x-file>
+                <x-input label="Name" wire:model="name" />
+                <x-input label="Email" wire:model="email" />
+                <x-select label="Country" wire:model="country_id" :options="$countries" placeholder="---" />
+            </x-form-section>
 
-        <hr class="my-5" />
+            <hr class="my-5" />
 
-        <x-form-section>
-            <x-slot:left>
-                <x-header title="Login" subtitle="Login info from user" size="text-2xl" />
-            </x-slot:left>
+            <x-form-section>
+                <x-slot:left>
+                    <x-header title="Login" subtitle="Login info from user" size="text-2xl" />
+                </x-slot:left>
 
-            <x-input label="Password" wire:model="password" type="password" />
-            <x-input label="Confirm Password" wire:model="password_confirmation" type="password" />
-        </x-form-section>
+                <x-input label="Password" wire:model="password" type="password" />
+                <x-input label="Confirm Password" wire:model="password_confirmation" type="password" />
+            </x-form-section>
 
-        <hr class="my-5" />
+            <hr class="my-5" />
 
-        <x-form-section>
-            <x-slot:left>
-                <x-header title="Details" subtitle="More about the user" size="text-2xl" />
-            </x-slot:left>
-            <x-choices-offline label="Languages" wire:model="my_languages" :options="$languages" searchable />
-            <x-editor wire:model="bio" label="Bio" hint="The great biography" />
-        </x-form-section>
+            <x-form-section>
+                <x-slot:left>
+                    <x-header title="Details" subtitle="More about the user" size="text-2xl" />
+                </x-slot:left>
+                <x-choices-offline label="Languages" wire:model="my_languages" :options="$languages" searchable />
+                <x-editor wire:model="bio" label="Bio" hint="The great biography" />
+            </x-form-section>
+        </x-card>
 
         <x-slot:actions>
             <x-button label="Cancel" link="/users" />

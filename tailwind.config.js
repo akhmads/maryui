@@ -6,6 +6,7 @@ export default {
         "./resources/**/**/*.js",
         "./app/View/Components/**/**/*.php",
         "./app/Livewire/**/**/*.php",
+        "./app/Enums/**/*.php",
 
         // Add mary
         "./vendor/robsontenorio/mary/src/View/Components/**/*.php",

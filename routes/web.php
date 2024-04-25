@@ -14,6 +14,8 @@ Route::middleware('auth')->group(function () {
     Volt::route('/posts/create', 'posts.create');
     Volt::route('/posts/{post}/edit', 'posts.edit');
     Volt::route('/countries', 'countries.index');
+    Volt::route('/contacts', 'contacts.index');
+    Volt::route('/items', 'items.index');
 });
 
 Route::get('/logout', function () {
