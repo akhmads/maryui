@@ -91,6 +91,7 @@ new class extends Component {
 
     public function save(): void
     {
+        $this->form->beforeValidation();
         $this->validate();
         $this->form->save();
         $this->formModal = false;
@@ -112,6 +113,9 @@ new class extends Component {
     <!-- TABLE  -->
     <x-card>
         <x-table :headers="$headers" :rows="$items" :sort-by="$sortBy" with-pagination @row-click="$wire.edit($event.detail.id)">
+            @scope('cell_price', $item)
+                {{ \Illuminate\Support\Number::format($item->price, precision: 2) }}
+            @endscope
             @scope('cell_status', $item)
                 <x-badge :value="$item->status->value" class="{{ $item->status->color() }}" />
             @endscope
@@ -125,7 +129,7 @@ new class extends Component {
     <x-modal wire:model="formModal" title="{{ $formTitle }}">
         <x-form wire:submit="save">
             <x-input label="Name" wire:model="form.name" />
-            <x-input label="Price" wire:model="form.price" money />
+            <x-input label="Price" wire:model="form.price" x-mask:dynamic="$money($input, '.', ',')" />
             <x-select label="Status" :options="\App\Enums\ActiveStatus::toSelect()" wire:model="form.status" />
             <x-slot:actions>
                 <x-button label="Cancel" @click="$wire.formModal = false" />

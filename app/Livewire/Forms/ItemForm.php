@@ -4,6 +4,8 @@ namespace App\Livewire\Forms;
 
 use Livewire\Attributes\Validate;
 use Livewire\Form;
+use App\Enums\ActiveStatus;
+use App\Helpers\Cast;
 use App\Models\Item;
 
 class ItemForm extends Form
@@ -18,7 +20,7 @@ class ItemForm extends Form
     public $price;
 
     #[Validate('required')]
-    public $status;
+    public $status = ActiveStatus::active;
 
     public function set(Item $item): void
     {
@@ -46,5 +48,10 @@ class ItemForm extends Form
     {
         $this->reset();
         $this->resetValidation();
+    }
+
+    public function beforeValidation(): void
+    {
+        $this->price = Cast::number($this->price);
     }
 }
