@@ -21,7 +21,7 @@ new class extends Component {
     #[Rule('required')]
     public string $body = '';
 
-    #[Rule('sometimes')]
+    #[Rule('required')]
     public string $date = '';
 
     #[Rule('sometimes')]
@@ -83,12 +83,21 @@ new class extends Component {
 <div>
     <x-header title="Update Post" separator />
     <x-form wire:submit="save">
-        <x-input label="Title" wire:model="title" />
-        <x-datetime label="Date" wire:model="date" />
-        <x-choices label="Author" wire:model="author_id" :options="$usersSearchable" search-function="searchUsers" single searchable />
-        <x-choices label="Tags" wire:model="tags" :options="$tagsSearchable" debounce="300ms" search-function="searchTags" searchable />
-        <x-editor wire:model="body" label="Body" hint="The great story" />
-
+        <div class="grid grid-cols-12 gap-6">
+            <x-card class="col-span-8">
+                <div class="space-y-4">
+                    <x-input label="Title" wire:model="title" />
+                    <x-editor wire:model="body" label="Body" hint="The great story" />
+                </div>
+            </x-card>
+            <x-card class="col-span-4">
+                <div class="space-y-4">
+                    <x-datetime label="Date" wire:model="date" />
+                    <x-choices label="Author" wire:model="author_id" :options="$usersSearchable" search-function="searchUsers" single searchable />
+                    <x-choices label="Tags" wire:model="tags" :options="$tagsSearchable" debounce="300ms" search-function="searchTags" searchable />
+                </div>
+            </x-card>
+        </div>
         <x-slot:actions>
             <x-button label="Cancel" link="/posts" />
             <x-button label="Save" icon="o-paper-airplane" spinner="save" type="submit" class="btn-primary" />
