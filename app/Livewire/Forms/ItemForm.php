@@ -27,7 +27,7 @@ class ItemForm extends Form
         $this->item = $item;
         $this->editMode = true;
         $this->name = $item->name;
-        $this->price = $item->price;
+        $this->price = Cast::currency($item->price);
         $this->status = $item->status;
     }
 
