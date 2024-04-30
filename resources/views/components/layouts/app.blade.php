@@ -77,9 +77,10 @@
                 <x-menu-item title="Users" icon="o-users" link="/users" />
                 <x-menu-item title="Posts" icon="c-pencil-square" link="/posts" />
                 <x-menu-item title="Countries" icon="o-globe-alt" link="/countries" />
-                <x-menu-sub title="POS Master" icon="o-circle-stack">
+                <x-menu-sub title="POS" icon="o-circle-stack">
                     <x-menu-item title="Contacts" link="/contacts" />
                     <x-menu-item title="Items" link="/items" />
+                    <x-menu-item title="Sales Invoice" link="/sales-invoice" />
                 </x-menu-sub>
                 {{-- <x-menu-sub title="Settings" icon="o-cog-6-tooth">
                     <x-menu-item title="Wifi" icon="o-wifi" link="####" />

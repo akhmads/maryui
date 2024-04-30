@@ -16,6 +16,10 @@ Route::middleware('auth')->group(function () {
     Volt::route('/countries', 'countries.index');
     Volt::route('/contacts', 'contacts.index');
     Volt::route('/items', 'items.index');
+
+    Volt::route('/sales-invoice', 'sales-invoice.index');
+    Volt::route('/sales-invoice/create', 'sales-invoice.create');
+    Volt::route('/sales-invoice/{salesInvoice}/edit', 'sales-invoice.edit');
 });
 
 Route::get('/logout', function () {
