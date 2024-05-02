@@ -11,6 +11,8 @@ use App\Models\Contact;
 new class extends Component {
     use Toast;
 
+    public SalesInvoice $salesInvoice;
+
     #[Rule('required')]
     public string $code = '';
 
@@ -28,6 +30,7 @@ new class extends Component {
     public function mount(): void
     {
         $this->searchContact();
+        $this->fill($this->salesInvoice);
     }
 
     public function with(): array
@@ -40,7 +43,7 @@ new class extends Component {
         $data = $this->validate();
         unset($data['details']);
 
-        $salesInvoice = SalesInvoice::create($data);
+        $this->salesInvoice->update($data);
 
         $this->success('Invoice created with success.', redirectTo: '/sales-invoice');
     }

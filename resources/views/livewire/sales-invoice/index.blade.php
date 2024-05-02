@@ -15,7 +15,7 @@ new class extends Component {
     public string $search = '';
     public int $contact_id = 0;
     public bool $drawer = false;
-    public array $sortBy = ['column' => 'name', 'direction' => 'asc'];
+    public array $sortBy = ['column' => 'created_at', 'direction' => 'desc'];
 
     public Collection $contactSearchable;
 
