@@ -19,7 +19,6 @@ new class extends Component {
 
     public Collection $contactSearchable;
 
-    // Clear filters
     public function clear(): void
     {
         $this->warning('Filters cleared', position: 'toast-bottom');
@@ -27,14 +26,12 @@ new class extends Component {
         $this->resetPage();
     }
 
-    // Delete action
     public function delete(SalesInvoice $salesInvoice): void
     {
         $salesInvoice->delete();
         $this->warning("Sales invoice has been deleted", 'Good bye!', position: 'toast-bottom');
     }
 
-    // Table headers
     public function headers(): array
     {
         return [
