@@ -39,13 +39,13 @@ new class extends Component {
             'contact_id' => 'required',
             'details' => 'array|min:1',
             'details.*.item_id' => 'required',
-            'details.*.qty' => 'required|gt:1',
+            'details.*.qty' => 'required|gt:0',
         ]);
         unset($data['details']);
 
         $salesInvoice = SalesInvoice::create($data);
 
-        $this->saveDetail($salesInvoice->id ?? '');
+        $this->saveDetail($salesInvoice);
 
         $this->success('Invoice created with success.', redirectTo: '/sales-invoice');
     }

@@ -12,11 +12,10 @@ use App\Models\SalesInvoice;
 new class extends Component {
     use Toast, WithPagination;
 
-    public string $search = '';
-    public int $contact_id = 0;
+    public ?string $search = '';
+    public ?int $contact_id = null;
     public bool $drawer = false;
     public array $sortBy = ['column' => 'created_at', 'direction' => 'desc'];
-
     public Collection $contactSearchable;
 
     public function clear(): void
@@ -24,6 +23,7 @@ new class extends Component {
         $this->warning('Filters cleared', position: 'toast-bottom');
         $this->reset();
         $this->resetPage();
+        $this->searchContact();
     }
 
     public function delete(SalesInvoice $salesInvoice): void
@@ -110,7 +110,7 @@ new class extends Component {
     <x-drawer wire:model="drawer" title="Filters" right separator with-close-button class="lg:w-1/3">
         <div class="grid gap-5">
             <x-input placeholder="Search..." wire:model.live.debounce="search" icon="o-magnifying-glass" @keydown.enter="$wire.drawer = false" />
-            <x-choices label="Customer" wire:model="contact_id" :options="$contactSearchable" search-function="searchContact" single searchable />
+            <x-choices label="Customer" wire:model.live="contact_id" :options="$contactSearchable" search-function="searchContact" single searchable />
         </div>
 
         <x-slot:actions>

@@ -14,18 +14,10 @@ new class extends Component {
 
     public SalesInvoice $salesInvoice;
 
-    #[Rule('required')]
     public string $code = '';
-
-    #[Rule('required')]
     public string $date = '';
-
-    #[Rule('required')]
     public ?int $contact_id = null;
-
-    #[Rule('sometimes')]
     public Collection $details;
-
     public Collection $contactSearchable;
     public Collection $itemSearchable;
 
@@ -45,7 +37,14 @@ new class extends Component {
 
     public function save(): void
     {
-        $data = $this->validate();
+        $data = $this->validate([
+            'code' => 'required',
+            'date' => 'required',
+            'contact_id' => 'required',
+            'details' => 'array|min:1',
+            'details.*.item_id' => 'required',
+            'details.*.qty' => 'required|gt:0',
+        ]);
         unset($data['details']);
 
         $this->salesInvoice->update($data);
@@ -120,7 +119,7 @@ new class extends Component {
 }; ?>
 
 <div>
-    <x-header title="Create New Sales Invoice" separator />
+    <x-header title="Edit Sales Invoice" separator />
     <x-form wire:submit="save">
         <div class="grid grid-cols-12 gap-6">
             <x-card class="col-span-12">
@@ -136,10 +135,13 @@ new class extends Component {
                 <div class="space-y-4">
                     <!-- TABLE DETAIL -->
                     <div class="flex justify-end">
-                        <x-button wire:click="addDetail" label="Add Detail" icon="o-plus" spinner="addDetail" type="button" class="btn-primary" />
+                        <x-button wire:click="addDetail" label="Add Detail" icon="o-plus" spinner="addDetail" type="button" class="btn" />
                     </div>
 
-                    {{-- @dump($details) --}}
+                    @error('details')
+                    <div class="text-error text-sm">{{ $message }}</div>
+                    @enderror
+
                     <table class="table">
                     <thead>
                     <tr>
@@ -152,8 +154,14 @@ new class extends Component {
 
                     @forelse ( $details->all() as $key => $detail )
                     <tr wire:key="item-detail-{{ $key }}">
-                        <td><x-choices label="" wire:model.live="details.{{$key}}.item_id" :options="$itemSearchable" search-function="searchItem" single searchable /></td>
-                        <td><x-input label="" wire:model.live.debounce="details.{{$key}}.qty" x-mask:dynamic="$money($input, '.', ',')" class="text-right" /></td>
+                        <td>
+                            <x-choices label="" wire:model.live="details.{{$key}}.item_id" :options="$itemSearchable" search-function="searchItem" single searchable />
+                            @error("details.{{$key}}.item_id")<div class="text-error text-sm">{{ $message }}</div>@enderror
+                        </td>
+                        <td>
+                            <x-input label="" wire:model.live.debounce="details.{{$key}}.qty" x-mask:dynamic="$money($input, '.', ',')" class="text-right" />
+                            @error("details.{{$key}}.qty")<div class="text-error text-sm">{{ $message }}</div>@enderror
+                        </td>
                         <td><x-button wire:click="deleteDetail('{{$key}}')" spinner="deleteDetail" type="button" class="btn-error btn-sm" icon="o-x-mark" /></td>
                     </tr>
                     @empty
