@@ -39,6 +39,8 @@ new class extends Component {
             ['key' => 'date', 'label' => 'Date'],
             ['key' => 'code', 'label' => 'Code'],
             ['key' => 'contact_name', 'label' => 'Customer'],
+            ['key' => 'qty', 'label' => 'Qty', 'class' => 'text-right w-[80px]'],
+            ['key' => 'total', 'label' => 'Total', 'class' => 'text-right w-[150px]'],
         ];
     }
 
@@ -100,6 +102,12 @@ new class extends Component {
     <!-- TABLE  -->
     <x-card>
         <x-table :headers="$headers" :rows="$salesInvoice" :sort-by="$sortBy" with-pagination link="sales-invoice/{id}/edit">
+            @scope('cell_qty', $sales)
+            <div class="text-right">{{ $sales->formattedQty }}</div>
+            @endscope
+            @scope('cell_total', $sales)
+            <div class="text-right">{{ $sales->formattedTotal }}</div>
+            @endscope
             @scope('actions', $sales)
             <x-button icon="o-trash" wire:click="delete({{ $sales['id'] }})" wire:confirm="Are you sure?" spinner class="btn-ghost btn-sm text-red-500" />
             @endscope

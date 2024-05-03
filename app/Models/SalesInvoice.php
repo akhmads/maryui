@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Helpers\Cast;
 
 class SalesInvoice extends Model
 {
@@ -19,5 +20,15 @@ class SalesInvoice extends Model
     public function details(): HasMany
     {
         return $this->HasMany(SalesInvoiceDetail::class,'sales_invoice_id','id');
+    }
+
+    public function getFormattedTotalAttribute()
+    {
+        return Cast::currency($this->attributes['total']);
+    }
+
+    public function getFormattedQtyAttribute()
+    {
+        return Cast::currency($this->attributes['qty']);
     }
 }

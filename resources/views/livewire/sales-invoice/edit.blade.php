@@ -4,7 +4,6 @@ use Livewire\Volt\Component;
 use Livewire\Attributes\Rule;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Mary\Traits\Toast;
 use App\Helpers\Cast;
 use App\Models\SalesInvoice;
@@ -24,6 +23,7 @@ new class extends Component {
     public Collection $itemSearchable;
     public $total_qty = 0;
     public $total_dpp = 0;
+    public $total_invoice = 0;
 
     public function mount(): void
     {
@@ -48,16 +48,19 @@ new class extends Component {
             'details' => 'array|min:1',
             'details.*.item_id' => 'required',
             'details.*.qty' => 'required|gt:0',
+            'details.*.price' => 'required|gt:0',
         ]);
+
         unset($data['details']);
-        $data['qty'] = $this->total_qty;
-        $data['dpp'] = $this->total_dpp;
+        $data['total_qty'] = Cast::number($this->total_qty);
+        $data['total_dpp'] = Cast::number($this->total_dpp);
+        $data['total_invoice'] = Cast::number($this->total_invoice);
 
         $this->salesInvoice->update($data);
 
         $this->saveDetail();
 
-        $this->success('Invoice created with success.', redirectTo: '/sales-invoice');
+        $this->success('Invoice has been updated.', redirectTo: '/sales-invoice');
     }
 
     public function searchContact(string $value = ''): void
@@ -84,7 +87,7 @@ new class extends Component {
     {
         $this->details->push([
             'item_id' => '',
-            'qty' => 1,
+            'qty' => 0,
             'price' => 0,
             'subtotal' => 0,
         ]);
@@ -93,8 +96,7 @@ new class extends Component {
     public function deleteDetail($key)
     {
         $this->details->forget($key);
-        $this->total_qty = $this->details->sum('qty');
-        $this->total_dpp = $this->details->sum('subtotal');
+        $this->total();
     }
 
     public function fillDetail()
@@ -103,11 +105,11 @@ new class extends Component {
         foreach ($details as $detail)
         {
             $this->details->push([
-            'item_id' => $detail->item_id,
-            'qty' => Cast::number($detail->qty),
-            'price' => Cast::number($detail->price),
-            'subtotal' => Cast::number($detail->subtotal),
-        ]);
+                'item_id' => $detail->item_id,
+                'qty' => Cast::number($detail->qty),
+                'price' => Cast::number($detail->price),
+                'subtotal' => Cast::number($detail->subtotal),
+            ]);
         }
     }
 
@@ -130,14 +132,22 @@ new class extends Component {
         $props = explode('.',$property);
         $index = $props[1] ?? '';
         $field = $props[2] ?? '';
+
         if (in_array($field, ['price','qty']))
         {
             $data = $this->details->get($index);
-            $data['subtotal'] = Cast::number($data['price']) * Cast::number($data['qty']);
+            $data['subtotal'] = Cast::number($data['qty']) * Cast::number($data['price']);
             $this->details->put($index, $data);
-            $this->total_qty = $this->details->sum('qty');
-            $this->total_dpp = $this->details->sum('subtotal');
+
+            $this->total();
         }
+    }
+
+    public function total(): void
+    {
+        $this->total_qty = Cast::number($this->details->sum('qty'));
+        $this->total_dpp = Cast::number($this->details->sum('subtotal'));
+        $this->total_invoice = $this->total_dpp;
     }
 }; ?>
 
@@ -177,6 +187,8 @@ new class extends Component {
                     </thead>
                     <tbody>
 
+                    {{-- x-mask:dynamic="$money($input, '.', ',')" --}}
+
                     @forelse ( $details->all() as $key => $detail )
                     <tr wire:key="item-detail-{{ $key }}">
                         <td>
@@ -205,8 +217,8 @@ new class extends Component {
 
                     <tr>
                         <td colspan="3" class="text-right font-semibold">Before Tax</td>
-                        <td>
-                            <x-input label="" wire:model.live="total_dpp" class="text-right" money readonly />
+                        <td class="">
+                            <x-input label="" wire:model.live="dpp" class="text-right" readonly />
                         </td>
                     </tr>
                     </tbody>

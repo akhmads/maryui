@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('code',30)->unique();
             $table->date('date');
             $table->foreignId('contact_id')->index();
-            $table->decimal('qty', 12, 2)->nullable();
-            $table->decimal('dpp', 12, 2)->nullable();
-            $table->decimal('total', 12, 2)->nullable();
+            $table->decimal('total_qty', 12, 2)->nullable();
+            $table->decimal('total_dpp', 12, 2)->nullable();
+            $table->decimal('total_invoice', 12, 2)->nullable();
             $table->timestamps();
         });
     }
