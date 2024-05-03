@@ -33,23 +33,14 @@ new class extends Component {
     {
         $this->fill($this->salesInvoice);
         $this->details = collect([]);
+        $this->fillDetail();
         $this->searchContact();
         $this->searchItem();
     }
 
-    public function headers(): array
-    {
-        return [
-            ['key' => 'item_id', 'label' => 'ID'],
-            ['key' => 'item_name', 'label' => 'Name'],
-        ];
-    }
-
     public function with(): array
     {
-        return [
-            'headers' => $this->headers(),
-        ];
+        return [];
     }
 
     public function save(): void
@@ -88,7 +79,9 @@ new class extends Component {
     {
         $this->details->push([
             'item_id' => '1',
-            'qty' => '1'
+            'qty' => '1',
+            'price' => 0,
+            'subtotal' => 0,
         ]);
     }
 
@@ -97,12 +90,26 @@ new class extends Component {
         $this->details->forget($key);
     }
 
+    public function fillDetail()
+    {
+        $details = $this->salesInvoice->details()->get();
+        foreach ($details as $detail)
+        {
+            $this->details->push([
+            'item_id' => $detail->item_id,
+            'qty' => $detail->qty,
+            'price' => $detail->price,
+            'subtotal' => $detail->subtotal,
+        ]);
+        }
+    }
+
     public function saveDetail()
     {
+        $this->salesInvoice->details()->delete();
         foreach ($this->details->all() as $detail)
         {
             $this->salesInvoice->details()->create([
-                'sales_invoice_id' => $this->salesInvoice->id,
                 'item_id' => $detail['item_id'],
                 'qty' => $detail['qty'],
                 'price' => 0,
@@ -116,19 +123,29 @@ new class extends Component {
     <x-header title="Create New Sales Invoice" separator />
     <x-form wire:submit="save">
         <div class="grid grid-cols-12 gap-6">
-            <x-card class="col-span-8">
+            <x-card class="col-span-12">
                 <div class="space-y-4">
-                    <x-input label="Code" wire:model="code" />
-
+                    <div class="grid grid-cols-3 gap-6">
+                        <x-input label="Code" wire:model="code" />
+                        <x-datetime label="Date" wire:model="date" />
+                        <x-choices label="Contact" wire:model="contact_id" :options="$contactSearchable" search-function="searchContact" single searchable />
+                    </div>
+                </div>
+            </x-card>
+            <x-card class="col-span-12">
+                <div class="space-y-4">
                     <!-- TABLE DETAIL -->
-                    <x-button wire:click="addDetail" label="Add Detail" icon="o-plus" spinner="addDetail" type="button" class="btn-primary" />
-                    @dump($details)
+                    <div class="flex justify-end">
+                        <x-button wire:click="addDetail" label="Add Detail" icon="o-plus" spinner="addDetail" type="button" class="btn-primary" />
+                    </div>
+
+                    {{-- @dump($details) --}}
                     <table class="table">
                     <thead>
                     <tr>
                         <th>Item</th>
-                        <th class="w-56">Qty</th>
-                        <th class="w-36">#</th>
+                        <th class="w-[150px]">Qty</th>
+                        <th class="w-[80px]">&nbsp;</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -136,8 +153,8 @@ new class extends Component {
                     @forelse ( $details->all() as $key => $detail )
                     <tr wire:key="item-detail-{{ $key }}">
                         <td><x-choices label="" wire:model.live="details.{{$key}}.item_id" :options="$itemSearchable" search-function="searchItem" single searchable /></td>
-                        <td><x-input label="" wire:model.live.debounce="details.{{$key}}.qty" /></td>
-                        <td><x-button wire:click="deleteDetail('{{$key}}')" spinner="deleteDetail" type="button" class="btn-error" icon="o-x-mark" /></td>
+                        <td><x-input label="" wire:model.live.debounce="details.{{$key}}.qty" x-mask:dynamic="$money($input, '.', ',')" class="text-right" /></td>
+                        <td><x-button wire:click="deleteDetail('{{$key}}')" spinner="deleteDetail" type="button" class="btn-error btn-sm" icon="o-x-mark" /></td>
                     </tr>
                     @empty
                     <tr>
@@ -147,12 +164,6 @@ new class extends Component {
 
                     </tbody>
                     </table>
-                </div>
-            </x-card>
-            <x-card class="col-span-4">
-                <div class="space-y-4">
-                    <x-datetime label="Date" wire:model="date" />
-                    <x-choices label="Contact" wire:model="contact_id" :options="$contactSearchable" search-function="searchContact" single searchable />
                 </div>
             </x-card>
         </div>
