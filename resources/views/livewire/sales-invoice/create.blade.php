@@ -198,9 +198,15 @@ new class extends Component {
                     @endforelse
 
                     <tr>
-                        <td colspan="3" class="text-right font-semibold">Before Tax</td>
+                        <td colspan="3" class="text-right font-semibold">Subtotal</td>
                         <td class="">
-                            <x-input label="" wire:model.live="dpp" class="text-right" readonly />
+                            <x-input label="" wire:model.live="total_dpp" class="text-right" readonly />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="text-right font-semibold">Total</td>
+                        <td class="">
+                            <x-input label="" wire:model.live="total_invoice" class="text-right" readonly />
                         </td>
                     </tr>
                     </tbody>

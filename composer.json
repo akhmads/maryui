@@ -10,7 +10,8 @@
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.4",
         "livewire/volt": "^1.6",
-        "robsontenorio/mary": "^1.26"
+        "robsontenorio/mary": "^1.26",
+        "spatie/simple-excel": "^3.6"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

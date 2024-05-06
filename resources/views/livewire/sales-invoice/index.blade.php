@@ -28,6 +28,7 @@ new class extends Component {
 
     public function delete(SalesInvoice $salesInvoice): void
     {
+        $salesInvoice->details()->delete();
         $salesInvoice->delete();
         $this->warning("Sales invoice has been deleted", 'Good bye!', position: 'toast-bottom');
     }
@@ -103,10 +104,10 @@ new class extends Component {
     <x-card>
         <x-table :headers="$headers" :rows="$salesInvoice" :sort-by="$sortBy" with-pagination link="sales-invoice/{id}/edit">
             @scope('cell_qty', $sales)
-            <div class="text-right">{{ $sales->formattedQty }}</div>
+            <div class="text-right">{{ $sales->qty }}</div>
             @endscope
             @scope('cell_total', $sales)
-            <div class="text-right">{{ $sales->formattedTotal }}</div>
+            <div class="text-right">{{ $sales->total }}</div>
             @endscope
             @scope('actions', $sales)
             <x-button icon="o-trash" wire:click="delete({{ $sales['id'] }})" wire:confirm="Are you sure?" spinner class="btn-ghost btn-sm text-red-500" />

@@ -22,13 +22,13 @@ class SalesInvoice extends Model
         return $this->HasMany(SalesInvoiceDetail::class,'sales_invoice_id','id');
     }
 
-    public function getFormattedTotalAttribute()
+    public function getTotalAttribute()
     {
-        return Cast::currency($this->attributes['total']);
+        return Cast::currency($this->attributes['total_invoice']);
     }
 
-    public function getFormattedQtyAttribute()
+    public function getQtyAttribute()
     {
-        return Cast::currency($this->attributes['qty']);
+        return Cast::currency($this->attributes['total_qty']);
     }
 }
