@@ -19,12 +19,14 @@ Route::middleware('auth')->group(function () {
     Volt::route('/contacts', 'contacts.index');
     Volt::route('/contacts/import', 'contacts.import');
     Volt::route('/items', 'items.index');
+    Volt::route('/items/import', 'items.import');
 
     Volt::route('/sales-invoice', 'sales-invoice.index');
     Volt::route('/sales-invoice/create', 'sales-invoice.create');
     Volt::route('/sales-invoice/{salesInvoice}/edit', 'sales-invoice.edit');
 
     Route::get('/contacts/export', [\App\Http\Controllers\ContactController::class, 'export']);
+    Route::get('/items/export', [\App\Http\Controllers\ItemController::class, 'export']);
 });
 
 Route::get('/logout', function () {

@@ -106,6 +106,8 @@ new class extends Component {
             <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
         </x-slot:middle>
         <x-slot:actions>
+            <x-button label="Export" link="/items/export" no-wire-navigate responsive icon="o-arrow-down-tray" />
+            <x-button label="Import" link="/items/import" responsive icon="o-arrow-up-tray" />
             <x-button label="Create" wire:click="create" responsive icon="o-plus" class="btn-primary" />
         </x-slot:actions>
     </x-header>

@@ -13,7 +13,7 @@ class ContactController extends Controller
     {
         $contacts = Contact::get();
 
-        $writer = SimpleExcelWriter::streamDownload('contact.xlsx');
+        $writer = SimpleExcelWriter::streamDownload('contacts.xlsx');
 
         foreach ( $contacts->lazy() as $contact ) {
             $writer->addRow([
@@ -25,6 +25,6 @@ class ContactController extends Controller
             ]);
         }
 
-        return $writer->toBrowser();
+        $writer->toBrowser();
     }
 }

@@ -110,7 +110,7 @@ new class extends Component {
             <div class="text-right">{{ $sales->total }}</div>
             @endscope
             @scope('actions', $sales)
-            <x-button icon="o-trash" wire:click="delete({{ $sales['id'] }})" wire:confirm="Are you sure?" spinner class="btn-ghost btn-sm text-red-500" />
+            <x-button icon="o-trash" wire:click="delete({{ $sales['id'] }})" wire:confirm="Are you sure?" spinner="delete({{ $sales['id'] }})" class="btn-ghost btn-sm text-red-500" />
             @endscope
         </x-table>
     </x-card>
