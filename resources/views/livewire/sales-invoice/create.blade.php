@@ -189,7 +189,7 @@ new class extends Component {
                             <x-input label="" wire:model.live="details.{{$key}}.subtotal" class="text-right" readonly />
                             @error("details.{{$key}}.subtotal")<div class="text-error text-sm">{{ $message }}</div>@enderror
                         </td>
-                        <td><x-button wire:click="deleteDetail('{{$key}}')" spinner="deleteDetail" type="button" class="btn-error btn-sm" icon="o-x-mark" /></td>
+                        <td><x-button wire:click="deleteDetail('{{$key}}')" spinner="deleteDetail('{{$key}}')" type="button" class="btn-error btn-sm" icon="o-x-mark" /></td>
                     </tr>
                     @empty
                     <tr>
