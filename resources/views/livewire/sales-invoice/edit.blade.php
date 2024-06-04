@@ -24,6 +24,7 @@ new class extends Component {
     public $total_qty = 0;
     public $total_dpp = 0;
     public $total_invoice = 0;
+    public $contacts = [];
 
     public function mount(): void
     {
@@ -63,15 +64,25 @@ new class extends Component {
         $this->success('Invoice has been updated.', redirectTo: '/sales-invoice');
     }
 
+    // public function searchContact(string $value = ''): void
+    // {
+    //     $selectedOption = Contact::where('id', $this->contact_id)->get();
+    //     $this->contactSearchable = Contact::query()
+    //         ->where('name', 'like', "%$value%")
+    //         ->take(5)
+    //         ->orderBy('name')
+    //         ->get()
+    //         ->merge($selectedOption);
+    // }
+
     public function searchContact(string $value = ''): void
     {
-        $selectedOption = Contact::where('id', $this->contact_id)->get();
-        $this->contactSearchable = Contact::query()
-            ->where('name', 'like', "%$value%")
-            ->take(5)
-            ->orderBy('name')
-            ->get()
-            ->merge($selectedOption);
+        $contacts = Contact::where('name', 'like', "%$value%")->orderBy('name')->limit(10)->get();
+        $results = [];
+        foreach ($contacts as $contact) {
+            $results[$contact->id] = $contact->name;
+        }
+        $this->contacts = $results;
     }
 
     public function searchItem(string $value = ''): void
@@ -160,7 +171,8 @@ new class extends Component {
                     <div class="grid grid-cols-3 gap-6">
                         <x-input label="Code" wire:model="code" />
                         <x-datetime label="Date" wire:model="date" />
-                        <x-choices label="Contact" wire:model="contact_id" :options="$contactSearchable" search-function="searchContact" single searchable />
+                        {{-- <x-choices label="Contact" wire:model="contact_id" :options="$contactSearchable" search-function="searchContact" single searchable /> --}}
+                        <x-choices2 label="Contact" wire:model="contact_id" :options="$contacts" search="searchContact(value)" />
                     </div>
                 </div>
             </x-card>
